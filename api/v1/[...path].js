@@ -179,8 +179,22 @@ async function providersSearch(p) {
   return { results: (r.body.results || []).map(mapProvider), url, source: 'NPPES NPI Registry (CMS)' };
 }
 
+// The NPI check digit (Luhn over the NPI with the 80840 prefix, as CMS specifies). A mistyped NPI is
+// refused here without a call to NPPES; a pass means well formed, not assigned (NPPES answers that).
+function npiCheckDigitOk(npi) {
+  const d = npi.split('').map(Number);
+  let sum = 24; // the prefix 80840 contributes 24 under the Luhn doubling
+  for (let i = 8; i >= 0; i--) {
+    let x = d[i];
+    if ((8 - i) % 2 === 0) { x *= 2; if (x > 9) x -= 9; }
+    sum += x;
+  }
+  return (10 - (sum % 10)) % 10 === d[9];
+}
+
 async function providerByNpi(npi) {
   if (!/^\d{10}$/.test(npi)) return { error: 'invalid_npi', detail: 'An NPI is exactly 10 digits.' };
+  if (!npiCheckDigitOk(npi)) return { error: 'invalid_npi', detail: 'This NPI fails its check digit, so no clinician can hold it. Check it for a typo.' };
   const url = `https://npiregistry.cms.hhs.gov/api/?${q({ version: '2.1', number: npi })}`;
   const r = await upstream(url);
   if (!r.ok || !r.body) return { error: 'upstream_unavailable', detail: r.error || `NPPES returned ${r.status}`, url };
