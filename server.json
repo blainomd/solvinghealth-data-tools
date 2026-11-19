@@ -2,9 +2,17 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.blainomd/solvinghealth-data-tools",
   "title": "SolvingHealth federal health data",
-  "description": "Read-only US federal health data with the source URL on every result: NPI registry, FDA 510(k), recalls, adverse events, drug labels, trials, hospitals. No key.",
+  "description": "Read-only US federal health data with sources: NPI, FDA 510(k), recalls, trials, hospitals.",
   "version": "1.1.0",
   "websiteUrl": "https://solvinghealth.com/mcp",
-  "repository": { "url": "https://github.com/blainomd/solvinghealth-data-tools", "source": "github" },
-  "remotes": [{ "type": "streamable-http", "url": "https://solvinghealth.com/api/data-mcp" }]
+  "repository": {
+    "url": "https://github.com/blainomd/solvinghealth-data-tools",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://solvinghealth.com/api/data-mcp"
+    }
+  ]
 }
